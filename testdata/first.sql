@@ -1,0 +1,1 @@
+CREATE TYPE test AS ENUM ('a', 'b', 'c');
