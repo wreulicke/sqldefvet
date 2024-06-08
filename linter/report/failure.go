@@ -1,6 +1,6 @@
 package report
 
 type Failure struct {
-	// TODO: add Pos
+	// TODO: need Position
 	Message string
 }
