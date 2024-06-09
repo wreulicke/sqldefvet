@@ -1,0 +1,250 @@
+syntax = "proto3";
+package sqldefvet;
+
+message ColIdent {
+	string val = 1;
+}
+
+message TableIdent {
+	string val = 1;
+}
+
+message DDL {
+	DDLAction action = 1;
+	TableName table = 2;
+	TableName new_name = 3;
+	bool if_exists = 4;
+	TableSpec table_spec = 5;
+	PartitionSpec partition_spec = 6;
+	IndexSpec index_spec = 7;
+	repeated IndexColumn index_cols = 8;
+	Expr index_expr = 9;
+	ForeignKeyDefinition foreign_key = 10;
+	Policy policy = 11;
+	View view = 12;
+	Trigger trigger = 13;
+	Type type = 14;
+	Comment comment = 15;
+	Extension extension = 16;
+}
+
+message TableName {
+	TableIdent schema = 1;
+	TableIdent name = 2;
+}
+
+message TableSpec {
+	repeated ColumnDefinition columns = 1;
+	repeated IndexDefinition indexes = 2;
+	repeated ForeignKeyDefinition foreign_keys = 3;
+	repeated CheckDefinition checks = 4;
+}
+
+message ColumnDefinition {
+	ColIdent name = 1;
+	ColumnType type = 2;
+}
+
+message ColumnType {
+	string type = 1;
+	BoolVal not_null = 2;
+	BoolVal autoincrement = 3;
+	DefaultDefinition default = 4;
+	SridDefinition srid = 5;
+	SQLVal on_update = 6;
+	SQLVal comment = 7;
+	CheckDefinition check = 8;
+	BoolVal array = 9;
+	SQLVal length = 10;
+	BoolVal unsigned = 11;
+	BoolVal zerofill = 12;
+	SQLVal scale = 13;
+	SQLVal display_width = 14;
+	string charset = 15;
+	string collate = 16;
+	BoolVal timezone = 17;
+	repeated string enum_values = 18;
+	ColumnKeyOption key_opt = 19;
+	string references = 20;
+	repeated ColIdent reference_names = 21;
+	ColIdent reference_on_delete = 22;
+	ColIdent reference_on_update = 23;
+	GeneratedColumn generated = 24;
+	IdentityOpt identity = 25;
+}
+
+message DefaultDefinition {
+	DefaultValueOrExpression value_or_expression = 1;
+	ColIdent constraint_name = 2;
+}
+
+message DefaultValueOrExpression {
+	SQLVal value = 1;
+	Expr expr = 2;
+}
+
+message SQLVal {
+	ValType type = 1;
+	repeated uint8 val = 2;
+}
+
+message SridDefinition {
+	SQLVal value = 1;
+}
+
+message CheckDefinition {
+	Where where = 1;
+	ColIdent constraint_name = 2;
+	bool not_for_replication = 3;
+	BoolVal no_inherit = 4;
+}
+
+message Where {
+	string type = 1;
+	Expr expr = 2;
+}
+
+message GeneratedColumn {
+	Expr expr = 1;
+	string generated_type = 2;
+}
+
+message IdentityOpt {
+	string behavior = 1;
+	Sequence sequence = 2;
+	bool not_for_replication = 3;
+}
+
+message Sequence {
+	string name = 1;
+	bool if_not_exists = 2;
+	string type = 3;
+	SQLVal increment_by = 4;
+	SQLVal min_value = 5;
+	BoolVal no_min_value = 6;
+	SQLVal max_value = 7;
+	BoolVal no_max_value = 8;
+	SQLVal start_with = 9;
+	SQLVal cache = 10;
+	BoolVal cycle = 11;
+	BoolVal no_cycle = 12;
+	string owned_by = 13;
+}
+
+message IndexDefinition {
+	IndexInfo info = 1;
+	repeated IndexColumn columns = 2;
+	repeated IndexOption options = 3;
+	IndexPartition partition = 4;
+	ConstraintOptions constraint_options = 5;
+}
+
+message IndexInfo {
+	string type = 1;
+	ColIdent name = 2;
+	bool primary = 3;
+	bool spatial = 4;
+	bool unique = 5;
+	bool fulltext = 6;
+	BoolVal clustered = 7;
+}
+
+message IndexColumn {
+	ColIdent column = 1;
+	SQLVal length = 2;
+	string direction = 3;
+	string operator_class = 4;
+}
+
+message IndexOption {
+	string name = 1;
+	SQLVal value = 2;
+}
+
+message IndexPartition {
+	string name = 1;
+	string column = 2;
+}
+
+message ConstraintOptions {
+	bool deferrable = 1;
+	bool initially_deferred = 2;
+}
+
+message ForeignKeyDefinition {
+	ColIdent constraint_name = 1;
+	ColIdent index_name = 2;
+	repeated ColIdent index_columns = 3;
+	TableName reference_name = 4;
+	repeated ColIdent reference_columns = 5;
+	ColIdent on_delete = 6;
+	ColIdent on_update = 7;
+	bool not_for_replication = 8;
+	ConstraintOptions constraint_options = 9;
+}
+
+message PartitionSpec {
+	string action = 1;
+	ColIdent name = 2;
+	repeated PartitionDefinition definitions = 3;
+}
+
+message PartitionDefinition {
+	ColIdent name = 1;
+	Expr limit = 2;
+	bool maxvalue = 3;
+}
+
+message IndexSpec {
+	ColIdent name = 1;
+	ColIdent type = 2;
+	bool unique = 3;
+	bool primary = 4;
+	bool constraint = 5;
+	bool clustered = 6;
+	bool column_store = 7;
+	repeated ColIdent included = 8;
+	Where where = 9;
+	repeated IndexOption options = 10;
+	IndexPartition partition = 11;
+	ConstraintOptions constraint_options = 12;
+}
+
+message Policy {
+	ColIdent name = 1;
+	Permissive permissive = 2;
+	repeated uint8 scope = 3;
+	repeated ColIdent to = 4;
+	Where using = 5;
+	Where with_check = 6;
+}
+
+message View {
+	string type = 1;
+	string security_type = 2;
+	TableName name = 3;
+	SelectStatement definition = 4;
+}
+
+message Trigger {
+	ColIdent name = 1;
+	TableName table_name = 2;
+	string time = 3;
+	repeated string event = 4;
+	repeated Statement body = 5;
+}
+
+message Type {
+	TableName name = 1;
+	ColumnType type = 2;
+}
+
+message Comment {
+	string object_type = 1;
+	string object = 2;
+	string comment = 3;
+}
+
+message Extension {
+	string name = 1;
+}

@@ -1,0 +1,17 @@
+syntax = "proto3";
+package sqldefvet;
+
+option go_package = "github.com/wreulicke/sqldefvet/";
+
+// The greeting service definition.
+// go:plugin type=plugin version=1
+service RuleService {
+  // Sends a greeting
+  rpc Apply(ApplyRequest) returns (ApplyResponse) {}
+}
+
+message ApplyRequest {
+
+}
+
+message ApplyResponse {}
